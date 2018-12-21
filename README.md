@@ -457,3 +457,70 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
 	```
 
 	- So finally if we access `profile/` without login, Django will redirect to `login?next=/profile/`
+
+# Profile Picture
+
+- `pip install Pillow`
+
+- In `users/models.py`:
+	```python3
+	#'default.jpg'
+	image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+	```
+
+- Register your model in `admin.py`:
+
+	```python
+	from .models import Profile
+	admin.site.register(Profile)
+	```
+
+- How to access profile image: `python manage.py shell`
+
+	```python3
+	>>> from django.contrib.auth.models import User
+
+	>>> user = User.objects.filter(username='raghav').first()
+	>>> user
+	<User: raghav>
+
+	>>> user.profile.image
+	<ImageFieldFile: profile_pics/pp.jpg>
+	>>> user.profile.image.width
+	640
+	>>> user.profile.image.size
+	62449
+	>>> user.profile.image.url
+	'profile_pics/pp.jpg'
+
+	>>> user2 = User.objects.filter(username='Virus').first()
+	>>> user2.profile.image
+	<ImageFieldFile: default.jpg>
+	```
+
+- Now location of `profile_pic` directory is in project's root directory. We can change this default location in `settings.py` file by:
+
+	- ```python
+	MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+	MEDIA_URL = '/media/'
+	```
+
+	- `BASE_DIR` is a variable that Django creates at the top of `settings.py` file, that specify the location of our project based directory.
+
+	- The `MEDIA_ROOT` is the path on the filesystem to the directory containing your static media.
+
+	- The `MEDIA_URL` is the URL that makes the static media accessible over HTTP.
+
+- According to [docs](https://docs.djangoproject.com/en/2.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development):
+	```python3
+	from django.conf import settings
+	from django.conf.urls.static import static
+
+	urlpatterns = [
+	    # ... the rest of your URLconf goes here ...
+	] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+	```
+
+
+
+**DISCONTINUED**

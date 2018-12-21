@@ -23,4 +23,5 @@ def register(request):
 
 @login_required
 def profile(request):
+	messages.info(request, 'Welcome to Profile!')
 	return render(request, 'users/profile.html')
