@@ -59,17 +59,17 @@ Examples:
 **Function views** 
 
 1. Add an import:  `from my_app import views`
-2. Add a URL to `urlpatterns`:  `path('', views.home, name='home')`
+2. Add a URL to urlpatterns:  `path('', views.home, name='home')`
 
 **Class-based views**
 
 1. Add an import:  `from other_app.views import Home`
-2. Add a URL to `urlpatterns`:  `path('', Home.as_view(), name='home')`
+2. Add a URL to urlpatterns:  `path('', Home.as_view(), name='home')`
 
 **Including another URLconf**
 
-1. Import the `include()` function: `from django.urls import include, path`
-2. Add a URL to `urlpatterns`:  `path('blog/', include('blog.urls'))`
+1. Import the include() function: `from django.urls import include, path`
+2. Add a URL to urlpatterns:  `path('blog/', include('blog.urls'))`
 
 # Templates
 
@@ -382,3 +382,74 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
 	![better.png](https://github.com/raghav18gupta/raghav18gupta.github.io/raw/master/tuts/rawstaticimgs/Screenshot%20from%202018-12-20%2021-57-21.png)
 
 	Not only form looks better, errors like 'invalid password' gives better feedback.
+
+
+# Login/Logout
+
+- For login and logout, Django provides buildin class based views. In main `/urls.py` import:
+
+	```python
+	from django.contrib.auth import views as auth_views
+	```
+
+- Add `path` in `urlpatterns` in main `urls.py`. We need to use `.as_view()` since they are class based views:
+
+	```python
+	path('login', auth_views.LoginView.as_view(), name='login'),
+    path('logout', auth_views.LogoutView.as_view(), name='logout')
+	```
+
+- Now, if we navigate to `localhost:8000/login`, it shows `TemplateDoesNotExist at login/`, because by default it expect out template to exist in `registeration/login.html`.
+
+- We can tell Django to look for template inside `users/login.html` instead:
+
+	```python
+	path('login', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
+    path('logout', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout')
+	```
+
+- Create `user/login.html` and `user/logout.html` files and add some lines.
+
+- If we go to `localhost:8000/login` and enter correct credentials, it shows `404` error as it request a url `localhost:8000/accounts/profile/`. Note that `404` not only means template doesn't existt but it is trying to access the URL that doesn't have view attached to it.
+
+- So rather than redirect to `/account/profile` on succesful login (this is Django's default), we can tell Django to redirect to `blog-home` instead. So in `settings.py`, add setting `LOGIN_REDIRECT_URL = 'blog-home'`.
+
+- In `base.html` template: Django provides `user` variable, to check user is logged in or not.
+
+	```python
+	{% if user.is_authenticated %}
+		<a class="nav-item nav-link" href="{% url 'profile' %}">Profie</a>
+		<a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+	{% else %}
+		<a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+		<a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+	{% endif %}	
+	```
+
+- There are some views, which we want user to be logged in before access.
+	- Let's create a `profile` view in `users`'s `views.py`, which renders simple template `user/profile.html`.
+
+	- Add `profile/` path in `urlpatterns` as:
+		```python
+		path('profile/', user_views.profile, name='profile'),
+		```
+
+	- We can access `localhost:8000/profile` even after logout.
+
+	- For this, Django provides `@login_reqired` decorator to prevent access without login.
+
+	- In `users/views.py`:
+
+	```python
+	from django.contrib.auth.decorators import login_required
+	@login_required
+	def profile(request):
+		return render(request, 'users/profile.html')
+	```
+
+	- If user in logged in and access `profile/`, Django will redirect to `accounts/login/?next=/profile/` by default. We can change this in `settings.py` by adding a variable:
+	```python
+	LOGIN_URL = 'login'
+	```
+
+	- So finally if we access `profile/` without login, Django will redirect to `login?next=/profile/`
