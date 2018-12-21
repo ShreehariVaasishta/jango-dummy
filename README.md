@@ -399,7 +399,7 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
     path('logout', auth_views.LogoutView.as_view(), name='logout')
 	```
 
-- Now, if we navigate to `localhost:8000/login`, it shows `TemplateDoesNotExist at login/`, because by default it expect out template to exist in `registeration/login.html`.
+- Now, if we navigate to `localhost:8000/login`, it shows `TemplateDoesNotExist at login/`, because by default it expect our template to exist in `registeration/login.html`.
 
 - We can tell Django to look for template inside `users/login.html` instead:
 
@@ -410,9 +410,12 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
 
 - Create `user/login.html` and `user/logout.html` files and add some lines.
 
-- If we go to `localhost:8000/login` and enter correct credentials, it shows `404` error as it request a url `localhost:8000/accounts/profile/`. Note that `404` not only means template doesn't existt but it is trying to access the URL that doesn't have view attached to it.
+- If we go to `localhost:8000/login` and enter correct credentials, it shows `404` error as it request a url `localhost:8000/accounts/profile/`. Note that `404` not only means template doesn't exist but it also means that we are trying to access the URL that doesn't have view attached to it.
 
-- So rather than redirect to `/account/profile` on succesful login (this is Django's default), we can tell Django to redirect to `blog-home` instead. So in `settings.py`, add setting `LOGIN_REDIRECT_URL = 'blog-home'`.
+- So rather than redirect to `/account/profile` on succesful login (this is Django's default), we can tell Django to redirect to `blog-home` instead. So in `settings.py`, add setting:
+	```python
+	LOGIN_REDIRECT_URL = 'blog-home'
+	```
 
 - In `base.html` template: Django provides `user` variable, to check user is logged in or not.
 
@@ -442,6 +445,7 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
 
 	```python
 	from django.contrib.auth.decorators import login_required
+
 	@login_required
 	def profile(request):
 		return render(request, 'users/profile.html')
