@@ -49,6 +49,21 @@ learn_jango
 
 Just after creating an app, always add app in `learn_jango/settings.py`'s `INSTALLED_APPS` variable by adding `'blog.apps.BlogConfig'`.
 
+# Django URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/2.1/topics/http/urls/
+Examples:
+**Function views**
+    1. Add an import:  `from my_app import views`
+    2. Add a URL to urlpatterns:  `path('', views.home, name='home')`
+**Class-based views**
+    1. Add an import:  `from other_app.views import Home`
+    2. Add a URL to urlpatterns:  `path('', Home.as_view(), name='home')`
+**Including another URLconf**
+    1. Import the `include()` function: `from django.urls import include, path`
+    2. Add a URL to `urlpatterns`:  `path('blog/', include('blog.urls'))`
+
 # Templates
 
 All of your `html` files will go to `/learn_jango/blog/templates` directory. Inside `/blog`, create directory `/templates`, and inside `/templates`, create `/blog` directory.
@@ -85,7 +100,7 @@ Inside `templates/blog`, create `base.html` and `home.html`.
 
 1. `{% load static %}` inside `base.html` will allow it to load static files exists in `static/blog` directory. 
 
-2. `{% static 'blog/main.css' %}` inside `bas.html` will load static files. For example 
+2. `{% static 'blog/main.css' %}` inside `base.html` will load static files. For example 
 	`<link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">`
 
 3.  if-else in template:
@@ -94,7 +109,8 @@ Inside `templates/blog`, create `base.html` and `home.html`.
         <title>Django Blog - {{ title }}</title>
     {% else %}
         <title>Django Blog</title>
-    {% endif %}```
+    {% endif %}
+    ```
 
 4. `{% block content %}{% endblock %}` inside `base.html` allows other `html` pages to override this line. You can have multiple blocks with different names.
 
@@ -123,7 +139,8 @@ Inside `templates/blog`, create `base.html` and `home.html`.
 
 In `blog/views.py` you can create views, which contains logic when user hits particular url.
 Create two views: `home` and `about`, by:
-```
+
+```python
 def home(request):
 	return render(request, 'blog/home.html', context)
 ```
@@ -261,11 +278,11 @@ datetime.datetime(2018, 12, 20, 12, 35, 51, 32371, tzinfo=<UTC>)
 
 - Kind of messages:
 	```python
-	messages.debug
-	messages.info
-	messages.success
-	messages.warning
-	messages.error
+	messages.debug()
+	messages.info()
+	messages.success()
+	messages.warning()
+	messages.error()
 	```
 
 - Usage:
